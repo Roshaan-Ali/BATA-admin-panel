@@ -33,7 +33,7 @@ export const enable_disable = (url) => async (dispatch) => {
       `${apiUrl}${url}`,
       {},
       {
-        headers
+        headers,
       }
     );
     if (response.data.status) {
@@ -45,32 +45,46 @@ export const enable_disable = (url) => async (dispatch) => {
     console.log(error);
   }
 };
-// export const createUser = (text) => async (dispatch) => {
-//   try {
-//     const headers = {
-//       Authorization: `Bearer ${token}`,
-//     };
-//     const response = await axios.post(
-//       `${apiUrl}/api/admin/language/create`,
-//       { language_name: text },
-//       { headers }
-//     );
-//     if (response.data.status) {
-//       dispatch({
-//         type: "ALL_USERS",
-//         payload: response.data.data,
-//       });
-//       toast.success("New User Added");
-//     } else {
-//       toast.error("Couldn't Add New User");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+
+export const toggleLanguage = (id) => async (dispatch) => {
+  const header = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await axios.put(
+      `${apiUrl}/api/admin/language/activeOrUnactive/${id}`,
+      {},
+      header
+    );
+    console.log(response.data);
+  } catch (err) {
+    console.log("Network Error", err);
+  }
+};
+
+export const toggleUsers = (id) => async (dispatch) => {
+  const header = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await axios.put(
+      `${apiUrl}/api/admin/users/block/${id}`,
+      {},
+      header
+    );
+    console.log(response.data);
+  } catch (err) {
+    console.log("Network Error", err);
+  }
+};
 
 export const getAllLanguages = (token) => async (dispatch) => {
-  console.log(token);
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -80,6 +94,7 @@ export const getAllLanguages = (token) => async (dispatch) => {
       headers,
     });
     if (response.data.status) {
+      // console.log(response.data.data," response");
       dispatch({
         type: "ALL_LANGUAGES",
         payload: response.data.data,
@@ -292,5 +307,132 @@ export const createOccasions = (text) => async (dispatch) => {
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getBookings = (token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get(
+      `${apiUrl}/api/admin/bookingInterpreter/gets`,
+      { headers }
+    );
+    dispatch({
+      type: "GET_BOOKINGS",
+      payload: response.data.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getInactiveInterpreters = (token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get(
+      `${apiUrl}/api/admin/interpreter/inActiveInterpreter`,
+      { headers }
+    );
+    dispatch({
+      type: "GET_INACTIVE_INTERPRETERS",
+      payload: response.data.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const assignInterpreter = (id, data) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.put(
+      `${apiUrl}/api/admin/bookingInterpreter/accept/${id}`,
+      data,
+      { headers }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const rejectInterpreter = (id, data) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.put(
+      `${apiUrl}/api/admin/bookingInterpreter/reject/${id}`,
+      data,
+      { headers }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const createInterpreter = (data) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.post(
+      `${apiUrl}/api/admin/interpreter/create`,
+      data,
+      { headers }
+    );
+
+    console.log(response.data);
+    if (response.data.status) {
+      dispatch({
+        type: "CREATE_INTERPRETER",
+        payload: response.data.data,
+      });
+      toast.success("New Interpreter Created.");
+    } else {
+      toast.error("Couldn't Create New Interpreter");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const adminLogin =
+  (email, password, _onLoginSuccess) => async (dispatch) => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/users/signin`, {
+        email,
+        password,
+      });
+      if (response?.data?.success) {
+        dispatch({
+          type: "LOGIN_SUCCESS",
+          payload: response?.data?.data,
+        });
+        _onLoginSuccess();
+      } else {
+        toast.error(response?.data?.msg);
+      }
+    } catch (err) {
+      toast.error("Network Failure");
+      console.log(
+        "Network Error, ",
+        err?.response?.data?.msg || "No Connection ======="
+      );
+    }
+  };
+
+export const logout = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "LOGOUT_REQUEST",
+    });
+  } catch (err) {
+    console.log(err);
   }
 };

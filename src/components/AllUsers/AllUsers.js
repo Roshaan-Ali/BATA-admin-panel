@@ -1,153 +1,193 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../actions/actions";
-import { token } from "../../config/config";
-// import avatar from "../assets/images/xs/avatar1.jpg";
+import { imageUrl, token } from "../../config/config";
 import person from "../../assets/images/person.png";
+import BounceLoader from "react-spinners/BounceLoader";
+import Switch from "react-switch";
 
-const AllUsers = ({ userReducer, getAllUsers, enable_disable }) => {
-  // console.log(userReducer, "______________");
-  let allusers = userReducer?.allUsers;
+const AllUsers = ({ authReducer, userReducer, getAllUsers, toggleUsers }) => {
+  const [allUsers, setAllUsers] = useState(userReducer?.allUsers);
+  const [isLoading, setIsLoading] = useState(true);
+  const token = authReducer?.accessToken;
+  console.log(authReducer);
+  // const [userType, setUserType] = useState(2);
   useEffect(() => {
-    console.log(userReducer, "ooooooooo", allusers);
-    console.log("-------------------");
-    getAllUsers(token);
+    setIsLoading(true);
+    getAllUsers(token).then(() => {
+      setIsLoading(false);
+    });
+    setAllUsers(userReducer?.allUsers);
   }, []);
 
   const _onPressSwitch = (id) => {
-    // const id = updatedUser?.id;
-   const url = `/api/admin/users/block/${id}`
-    console.log(id, "-------0000000000,Activeeeeeeeeee");
-    enable_disable(url);
+    setIsLoading(true);
+    toggleUsers(id).then(() => {
+      getAllUsers(token);
+      setIsLoading(false);
+    });
   };
-  // const _onPressModalButton = () => {
-  //   const id = updatedUser?.id;
-  //   const data = {
-  //     first_name: updatedUser.first_name,
-  //     last_name: updatedUser.last_name,
-  //     language: updatedUser.language,
-  //     profile_image: updatedUser.profile_image,
-  //   };
-  //   console.log(data, id)
-  //   // updateUsers(data, id).then(() => {
-  //   //   getAllUsers();
-  //   // });
-  //   // setModal("");
-  // };
-  // const [isAddUsermodal, setIsAddUsermodal] = useState("");
-  // const [isModal, setModal] = useState("");
 
-  // const openModal = (item) => {
-  //   setModal(true);
-  //   setUpdateObject(item);
-  // };
+  const _onPressToggleUsers = (role_id) => {
+    if (role_id === 1) {
+      setAllUsers(userReducer?.allUsers);
+    } else {
+      const filterArr = userReducer?.allUsers?.filter(
+        (ele) => ele?.role_id == role_id
+      );
+      setAllUsers(filterArr);
+    }
+  };
 
-  // const addnewuser = () => {
-  //   setIsAddUsermodal(true);
-  // };
-  // const createNewUser = () => {
-  //   createUser(usercreated).then(() => {
-  //     getAllUsers();
-  //   });
-  //   setIsAddUsermodal("");
-  // };
+  useEffect(() => {
+    setAllUsers(userReducer?.allUsers);
+  }, [userReducer?.allUsers]);
   return (
     <>
       <div className="container-fluid">
-        <h2>All Users</h2>
-        <div className="row clearfix">
-          <div className="col-lg-12">
-            <div className="table-responsive">
-              <table className="table table-hover table-custom spacing5">
-                <tbody>
-                  {allusers.map((item, idx) => (
-                    <tr key={idx}>
-                      <td className="w60">
-                        <img
-                          src={item.profile_image ? item.profile_image : person}
-                          data-toggle="tooltip"
-                          data-placement="top"
-                          title=""
-                          alt="Avatar"
-                          className="w35 rounded"
-                          data-original-title="Avatar Name"
-                        />
-                      </td>
-                      <td>
-                        <a href="/" title="">
-                          {item.first_name}
-                        </a>
-                      </td>
-                      <td>
-                        <span>{item.email}</span>
-                      </td>
-                      <td>
-                        <p>{item.language}</p>
-                      </td>
-                      <td>
-                        <p>{item.service_type}</p>
-                      </td>
-                      <td>
-                        <p>{item.current_package}</p>
-                      </td>
-                      <td>
-                        <label className="switch">
-                          <input
-                            type="checkbox"
-                            onChange={() => {
-                              _onPressSwitch(item.id);
-                            }}
-                          />
-                          <span class="slider round"></span>
-                        </label>
-                      </td>
-                    </tr>
-                  ))}
-                  <tr></tr>
-                </tbody>
-              </table>
-            </div>
-            <nav aria-label="Page navigation example">
-              <ul className="pagination">
-                <li className="page-item">
-                  <Link className="page-link" to="/" aria-label="Previous">
-                    <span aria-hidden="true">«</span>
-                    <span className="sr-only">Previous</span>
-                  </Link>
-                </li>
-                <li className="page-item active">
-                  <Link className="page-link" to="/">
-                    1
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="/">
-                    2
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="/">
-                    3
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="/" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                    <span className="sr-only">Next</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
+        <h2 className="mt-2">Users & Interpreters</h2>
+        <div style={{ display: "flex", marginBottom: "10px" }}>
+          <button
+            style={{
+              borderRadius: "20px",
+              fontSize: "15px",
+              color: "white",
+              padding: "6px 25px",
+
+              backgroundColor: "#81246C",
+            }}
+            onClick={() => {
+              _onPressToggleUsers(1);
+            }}
+          >
+            View All
+          </button>
+          <button
+            style={{
+              borderRadius: "20px",
+              fontSize: "15px",
+              color: "white",
+              padding: "6px 25px",
+              marginLeft: "10px",
+              backgroundColor: "#81246C",
+            }}
+            onClick={() => _onPressToggleUsers(2)}
+          >
+            View Users
+          </button>
+          <button
+            style={{
+              borderRadius: "20px",
+              fontSize: "15px",
+              color: "white",
+              padding: "6px 25px",
+              marginLeft: "10px",
+              backgroundColor: "#81246C",
+            }}
+            onClick={() => _onPressToggleUsers(3)}
+          >
+            View Interpreters
+          </button>
         </div>
+        {isLoading ? (
+          <div className="loader-container">
+            <BounceLoader color={"#81246C"} loading={isLoading} size={100} />
+          </div>
+        ) : (
+          <div className="row clearfix">
+            <div className="col-lg-12">
+              <div className="table-responsive">
+                <table className="table table-hover table-custom spacing5">
+                  <tbody>
+                    {allUsers?.map((item, idx) => (
+                      // userType === item?.role_id &&
+                      <tr key={idx}>
+                        <td className="w60">
+                          <img
+                            src={
+                              item?.profile_image !== undefined &&
+                              item?.profile_image !== null
+                                ? `${imageUrl}${item?.profile_image}`
+                                : person
+                            }
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title=""
+                            alt="Avatar"
+                            className="w35 rounded"
+                            data-original-title="Avatar Name"
+                          />
+                        </td>
+                        <td>
+                          <a href="/" title="">
+                            {item?.first_name}
+                          </a>
+                        </td>
+                        <td>
+                          <span>{item?.email}</span>
+                        </td>
+                        <td>
+                          <p>{item?.language}</p>
+                        </td>
+                        <td>
+                          <p>{item?.service_type}</p>
+                        </td>
+                        <td>
+                          <p>{item?.current_package}</p>
+                        </td>
+                        <td>
+                          <Switch
+                            onChange={() => _onPressSwitch(item?.id)}
+                            checked={item?.blocked === 1 ? true : false}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                    <tr></tr>
+                  </tbody>
+                </table>
+              </div>
+              {/* <nav aria-label="Page navigation example">
+                <ul className="pagination">
+                  <li className="page-item">
+                    <Link className="page-link" to="/" aria-label="Previous">
+                      <span aria-hidden="true">«</span>
+                      <span className="sr-only">Previous</span>
+                    </Link>
+                  </li>
+                  <li className="page-item active">
+                    <Link className="page-link" to="/">
+                      1
+                    </Link>
+                  </li>
+                  <li className="page-item">
+                    <Link className="page-link" to="/">
+                      2
+                    </Link>
+                  </li>
+                  <li className="page-item">
+                    <Link className="page-link" to="/">
+                      3
+                    </Link>
+                  </li>
+                  <li className="page-item">
+                    <Link className="page-link" to="/" aria-label="Next">
+                      <span aria-hidden="true">»</span>
+                      <span className="sr-only">Next</span>
+                    </Link>
+                  </li>
+                </ul>
+              </nav> */}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
 };
-const mapStateToProps = ({ userReducer }) => {
-  return { userReducer };
+const mapStateToProps = ({ userReducer, authReducer }) => {
+  return { userReducer, authReducer };
 };
 export default connect(mapStateToProps, actions)(AllUsers);
 

@@ -1,15 +1,18 @@
-const INITIALSTATE = { allRoles: [] };
+const INITIALSTATE = { allRoles: [], inactiveInterpreters: [] };
 
-export const roleReducer = (state = INITIALSTATE, action) => {
-  console.log("::::::::::::::::::::", state.allRoles);
+export function roleReducer(state = INITIALSTATE, action) {
   switch (action.type) {
-    case 'ALL_ROLES':
+    case "ALL_ROLES":
       return {
         ...state,
         allRoles: action.payload,
       };
-
+    case "GET_INACTIVE_INTERPRETERS":
+      return {
+        ...state,
+        inactiveInterpreters: action.payload,
+      };
     default:
       return state;
   }
-};
+}

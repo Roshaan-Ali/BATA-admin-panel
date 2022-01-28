@@ -2,9 +2,9 @@
 
 const INITIALSTATE = { allLangauges: [] };
 
-export const langaugesReducer = (state = INITIALSTATE, action) => {
+export function langaugesReducer(state = INITIALSTATE, action) {
   switch (action.type) {
-    case 'ALL_LANGUAGES':
+    case "ALL_LANGUAGES":
       return {
         ...state,
         allLangauges: action.payload,
@@ -13,4 +13,4 @@ export const langaugesReducer = (state = INITIALSTATE, action) => {
     default:
       return state;
   }
-};
+}

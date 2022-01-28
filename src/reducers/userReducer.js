@@ -1,9 +1,8 @@
 const INITIALSTATE = { allUsers: [] };
 
-export const userReducer = (state = INITIALSTATE, action) => {
-  console.log("::::::::::::::::::::", state.allUsers);
+export function userReducer(state = INITIALSTATE, action) {
   switch (action.type) {
-    case 'ALL_USERS':
+    case "ALL_USERS":
       return {
         ...state,
         allUsers: action.payload,
@@ -12,4 +11,4 @@ export const userReducer = (state = INITIALSTATE, action) => {
     default:
       return state;
   }
-};
+}

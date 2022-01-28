@@ -1,8 +1,8 @@
 // import { updateLanguage } from "../actions/actions";
 
-const INITIALSTATE = { allPackages: [], customPackages:[] };
+const INITIALSTATE = { allPackages: [], customPackages: [] };
 
-export const packagesReducer = (state = INITIALSTATE, action) => {
+export function packagesReducer(state = INITIALSTATE, action) {
   switch (action.type) {
     case "ALL_PACKAGES":
       return {
@@ -10,13 +10,13 @@ export const packagesReducer = (state = INITIALSTATE, action) => {
         allPackages: action.payload,
       };
 
-      case "CUSTOM_PACKAGES":
-        return {
-          ...state,
-          customPackages: action.payload,
-        };
+    case "CUSTOM_PACKAGES":
+      return {
+        ...state,
+        customPackages: action.payload,
+      };
 
     default:
       return state;
   }
-};
+}

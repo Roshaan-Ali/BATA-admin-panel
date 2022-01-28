@@ -5,6 +5,8 @@ import { langaugesReducer } from "./langaugesReducer";
 import { packagesReducer } from "./packagesReducer";
 import { roleReducer } from "./roleReducer";
 import { occasionsReducer } from "./occasionsReducer";
+import { bookingsReducer } from "./bookingsReducer";
+import { authReducer } from "./authReducer";
 
 export default combineReducers({
   settings,
@@ -12,5 +14,7 @@ export default combineReducers({
   langaugesReducer,
   packagesReducer,
   roleReducer,
-  occasionsReducer
+  authReducer,
+  bookingsReducer,
+  occasionsReducer,
 });

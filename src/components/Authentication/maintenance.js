@@ -9,7 +9,7 @@ export default class Maintenance extends Component {
 					<div className="vertical-align-middle maintenance">
 						<div className="text-center">
 							<article>
-								<h1>We&rsquo;ll be back soon!</h1>
+								<h1>We&rsquo;ll be back soon!llllllllllllllllllllllllllll</h1>
 								<div>
 									<p>Sorry for the inconvenience<br /> but we&rsquo;re performing some maintenance at the moment.<br /> If you need to you can always <Link to="/">contact us</Link>, otherwise we&rsquo;ll be back online shortly!</p>
 									<p>&mdash; The Team</p>
