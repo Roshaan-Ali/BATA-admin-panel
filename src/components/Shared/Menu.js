@@ -95,10 +95,10 @@ class Menu extends Component {
           }`}
         >
           <div className="navbar-brand">
-            <Link to="/">
+            <Link to="/layout">
               <img
-                src={require("../../assets/images/bata_logo.png")}
-                alt="Oculux Logo"
+                src={require("../../assets/images/bata_logo_1.png")}
+                alt="bata Logo"
                 className="img-fluid logo"
               />
               <span>BATA</span>

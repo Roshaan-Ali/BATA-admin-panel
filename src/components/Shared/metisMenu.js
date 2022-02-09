@@ -29,6 +29,12 @@ const metisMenu = [
     label: "Packages",
     to: "/layout/Packages",
   },
+  {
+    id: 1041,
+    icon: "icon-speedometer",
+    label: "Payments",
+    to: "/layout/PackagePayments",
+  },
   // {
   // 	"id": 1,
   // 	"icon": "icon-home",

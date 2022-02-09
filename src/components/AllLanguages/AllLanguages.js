@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 // import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import * as actions from "../../actions/actions";
-import { token } from "../../config/config";
 import BounceLoader from "react-spinners/BounceLoader";
 import Switch from "react-switch";
 
@@ -11,6 +10,7 @@ const AllLanguages = ({
   langaugesReducer,
   getAllLanguages,
   updateLanguage,
+  authReducer,
   createLanguage,
   toggleLanguage,
   enable_disable,
@@ -22,7 +22,7 @@ const AllLanguages = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isAddLangmodal, setIsAddLangmodal] = useState("");
   const [isModal, setModal] = useState("");
-
+  const token = authReducer?.accessToken;
   useEffect(() => {
     // setIsLoading(true);
     getAllLanguages(token).then(() => {
@@ -32,7 +32,7 @@ const AllLanguages = ({
 
   const _onPressModalButton = () => {
     setIsLoading(true);
-    updateLanguage(updateObject?.id, updatedLanguage).then(() => {
+    updateLanguage(updateObject?.id, updatedLanguage, token).then(() => {
       getAllLanguages(token);
       setIsLoading(false);
       setModal("");
@@ -41,7 +41,7 @@ const AllLanguages = ({
 
   const _onPressSwitch = (id) => {
     setIsLoading(true);
-    toggleLanguage(id).then(() => {
+    toggleLanguage(id, token).then(() => {
       getAllLanguages(token);
       setIsLoading(false);
     });
@@ -58,7 +58,7 @@ const AllLanguages = ({
   };
 
   const createNewLanguage = () => {
-    createLanguage(languagecreated).then(() => {
+    createLanguage(languagecreated, token).then(() => {
       getAllLanguages();
     });
     setIsAddLangmodal("");
@@ -94,13 +94,19 @@ const AllLanguages = ({
                 <div className="table-responsive">
                   <table className="table table-hover table-custom spacing5">
                     <tbody>
-                      {languages?.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>
-                            <p>{item?.language_name}</p>
-                          </td>
-                          <td>
-                            {/* <label className="switch">
+                      <tr>
+                        <td className="font-weight-bold">Language Name</td>
+                        <td className="font-weight-bold">Enable / Disable</td>
+                        <td className="font-weight-bold">Action</td>
+                      </tr>
+                      {languages?.length > 0 ? (
+                        languages?.map((item, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <p>{item?.language_name}</p>
+                            </td>
+                            <td>
+                              {/* <label className="switch">
                               <input
                                 // value={item?.status === 0 ? false : true}
                                 value={false}
@@ -111,29 +117,32 @@ const AllLanguages = ({
                               />
                               <span className="slider round"></span>
                             </label> */}
-                            <Switch
-                              onChange={() => _onPressSwitch(item?.id)}
-                              checked={item?.status === 1 ? true : false}
-                            />
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-success btn-sm mr-1 float-right"
-                              onClick={() => openModal(item)}
-                            >
-                              Update
-                            </button>
+                              <Switch
+                                onChange={() => _onPressSwitch(item?.id)}
+                                checked={item?.status === 1 ? true : false}
+                              />
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-success btn-sm mr-1 float-right w-100"
+                                onClick={() => openModal(item)}
+                              >
+                                Update
+                              </button>
 
-                            {/* <button
+                              {/* <button
                           type="button"
                           className="btn btn-round btn-danger"
                           onClick={() => setModal(true)}
                         >
                           Delete
                         </button> */}
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <h4>No Languages Record</h4>
+                      )}
                       <tr></tr>
                     </tbody>
                   </table>
@@ -258,6 +267,7 @@ const AllLanguages = ({
                       <div className="input-group input-group-lg">
                         <input
                           type="text"
+                          style={{ color: "black" }}
                           className="form-control"
                           aria-label="Large"
                           aria-describedby="inputGroup-sizing-sm"
@@ -294,7 +304,7 @@ const AllLanguages = ({
     </>
   );
 };
-const mapStateToProps = ({ langaugesReducer }) => {
-  return { langaugesReducer };
+const mapStateToProps = ({ langaugesReducer, authReducer }) => {
+  return { langaugesReducer, authReducer };
 };
 export default connect(mapStateToProps, actions)(AllLanguages);

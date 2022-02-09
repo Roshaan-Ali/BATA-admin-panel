@@ -1,12 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Columnchart from '../common/columnchart';
-import Tooltip from '../common/toolTip';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import Columnchart from "../common/columnchart";
+import Tooltip from "../common/toolTip";
+import * as actions from "../../actions/actions";
 
-const Dashboard = () => {
-	return (
-		<div className="container-fluid">
-			<div className="block-header">
+const Dashboard = ({
+  authReducer,
+  getDashboardCounts,
+  getDashboardChartData,
+}) => {
+  const token = authReducer?.accessToken;
+  const TOTAL_ACCEPTED_BOOKINGS = authReducer?.totalBookings?.acceptBookings;
+  const TOTAL_REJECTED_BOOKINGS = authReducer?.totalBookings?.rejectBookings;
+  const TOTAL_COMPLETED_BOOKINGS =
+    authReducer?.totalBookings?.completedBookings;
+  const TOTAL_PENDING_BOOKINGS = authReducer?.totalBookings?.pendingBookings;
+  const TOTAL_USERS = authReducer?.totalUsers;
+  const TOTAL_INTERPRETERS = authReducer?.totalInterpreters;
+  const CHART_DATA = authReducer?.chartData;
+
+  useEffect(() => {
+    getDashboardCounts(token);
+    getDashboardChartData(token);
+  }, []);
+  return (
+    <div className="container-fluid">
+      {/* <div className="block-header">
 				<div className="row clearfix">
 					<div className="col-md-6 col-sm-12">
 						<h1>My Page</h1>
@@ -22,65 +42,131 @@ const Dashboard = () => {
 						<Link to="https://themeforest.net/item/oculux-bootstrap-4x-admin-dashboard-clean-modern-ui-kit/23091507" className="btn btn-sm btn-success" title="Themeforest"><i className="icon-basket"></i> Buy Now</Link>
 					</div>
 				</div>
-			</div>
+			</div> */}
 
-			<div className="row clearfix">
-				<div className="col-lg-3 col-md-6">
-					<div className="card">
-						<div className="body">
-							<div className="d-flex align-items-center">
-								<div className="icon-in-bg bg-indigo text-white rounded-circle"><i className="fa fa-briefcase"></i></div>
-								<div className="ml-4">
-									<span>Total income</span>
-									<h4 className="mb-0 font-weight-medium">$7,805</h4>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-3 col-md-6">
-					<div className="card">
-						<div className="body">
-							<div className="d-flex align-items-center">
-								<div className="icon-in-bg bg-azura text-white rounded-circle"><i className="fa fa-credit-card"></i></div>
-								<div className="ml-4">
-									<span>New expense</span>
-									<h4 className="mb-0 font-weight-medium">$3,651</h4>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-3 col-md-6">
-					<div className="card">
-						<div className="body">
-							<div className="d-flex align-items-center">
-								<div className="icon-in-bg bg-orange text-white rounded-circle"><i className="fa fa-users"></i></div>
-								<div className="ml-4">
-									<span>Daily Visits</span>
-									<h4 className="mb-0 font-weight-medium">5,805</h4>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-3 col-md-6">
-					<div className="card">
-						<div className="body">
-							<div className="d-flex align-items-center">
-								<div className="icon-in-bg bg-pink text-white rounded-circle"><i className="fa fa-life-ring"></i></div>
-								<div className="ml-4">
-									<span>Bounce rate</span>
-									<h4 className="mb-0 font-weight-medium">$13,651</h4>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+      <div className="row clearfix">
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-indigo text-white rounded-circle">
+                  <i className="fa fa-briefcase"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Total Clients</span>
+                  <h4 className="mb-0 font-weight-medium">{TOTAL_USERS}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-azura text-white rounded-circle">
+                  <i className="fa fa-credit-card"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Total Earnings</span>
+                  <h4 className="mb-0 font-weight-medium">$3,651</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-orange text-white rounded-circle">
+                  <i className="fa fa-users"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Total Interpreters</span>
+                  <h4 className="mb-0 font-weight-medium">
+                    {TOTAL_INTERPRETERS}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-pink text-white rounded-circle">
+                  <i className="fas fa-hands-helping"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Pending Bookings</span>
+                  <h4 className="mb-0 font-weight-medium">
+                    {TOTAL_PENDING_BOOKINGS}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-			<div className="row clearfix">
-				<div className="col-lg-4 col-md-12">
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-pink text-white rounded-circle">
+                  <i className="fas fa-hands-helping"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Accepted Bookings</span>
+                  <h4 className="mb-0 font-weight-medium">
+                    {TOTAL_ACCEPTED_BOOKINGS}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-pink text-white rounded-circle">
+                  <i className="fas fa-hands-helping"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Completed Bookings</span>
+                  <h4 className="mb-0 font-weight-medium">
+                    {TOTAL_COMPLETED_BOOKINGS}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-lg-3 col-md-6">
+          <div className="card">
+            <div className="body">
+              <div className="d-flex align-items-center">
+                <div className="icon-in-bg bg-pink text-white rounded-circle">
+                  <i className="fas fa-hands-helping"></i>
+                </div>
+                <div className="ml-4">
+                  <span>Rejected Bookings</span>
+                  <h4 className="mb-0 font-weight-medium">
+                    {TOTAL_REJECTED_BOOKINGS}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row clearfix">
+        {/* <div className="col-lg-4 col-md-12">
 					<div className="card">
 						<div className="header">
 							<h2>Users</h2>
@@ -118,18 +204,18 @@ const Dashboard = () => {
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className="col-lg-8 col-md-12">
-					<div className="card user_statistics">
-						<div className="header">
-							<h2>Earning Report</h2>
-						</div>
-						<div className="body">
-							<Columnchart />
-						</div>
-					</div>
-				</div>
-				<div className="col-lg-8 col-md-12">
+				</div> */}
+        <div className="col-lg-12 col-md-12">
+          <div className="card user_statistics">
+            <div className="header">
+              <h2>Earning Report</h2>
+            </div>
+            <div className="body">
+              <Columnchart chartData={CHART_DATA} />
+            </div>
+          </div>
+        </div>
+        {/* <div className="col-lg-8 col-md-12">
 					<div className="table-responsive">
 						<table className="table table-hover table-custom spacing5">
 							<thead>
@@ -351,10 +437,14 @@ const Dashboard = () => {
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	);
+				</div> */}
+      </div>
+    </div>
+  );
+};
 
-}
-export default Dashboard
+const mapStateToProps = ({ authReducer }) => {
+  return { authReducer };
+};
+
+export default connect(mapStateToProps, actions)(Dashboard);

@@ -1,5 +1,5 @@
 export const apiUrl = "http://webprojectmockup.com:9443";
-// export const apiUrl = "http://98b2-110-93-244-255.ngrok.io";
+// export const apiUrl = "http://73e3-110-93-244-255.ngrok.io";
 
 export const imageUrl = `${apiUrl}/public/profileImage/`;
 export const token =

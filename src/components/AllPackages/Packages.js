@@ -7,12 +7,20 @@ import BounceLoader from "react-spinners/BounceLoader";
 const Packages = ({
   packagesReducer,
   getAllPackages,
-  getAllCustomPackages,authReducer,
+  getAllCustomPackages,
+  authReducer,
+  createPackage,
   updateAllPackages,
 }) => {
-  let packages = packagesReducer?.allPackages;
-  let custompackges = packagesReducer?.customPackages;
+  const [packages, setPackages] = useState(packagesReducer?.allPackages);
+  const [custompackges, setCustomPackages] = useState(
+    packagesReducer?.customPackages
+  );
   const token = authReducer?.accessToken;
+  const [newPackageName, setNewPackageName] = useState("");
+  const [newPackageLimit, setNewPackageLimit] = useState("");
+  const [newPackagePrice, setNewPackagePrice] = useState("");
+  const [newPackageDescription, setNewPackageDescription] = useState([]);
 
   const [isAddPackagemodal, setIsAddPackagemodal] = useState("");
   const [updatePackageModal, setUpdatePackageModal] = useState(null);
@@ -23,7 +31,7 @@ const Packages = ({
   const [isLoading, setIsLoading] = useState(true);
 
   const _updatePackageModal = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     const id = updateSelectedPackageData?.id;
     const data = {
       name: updateSelectedPackageData.name,
@@ -31,13 +39,31 @@ const Packages = ({
       package_limit: updateSelectedPackageData.package_limit,
       description: updateSelectedPackageData.description,
     };
-    updateAllPackages(data, id).then(() => {
-      getAllPackages();
+    updateAllPackages(data, id, token).then(() => {
+      getAllPackages(token);
       getAllCustomPackages(token).then(() => {
         setIsLoading(false);
       });
     });
     setUpdatePackageModal(false);
+  };
+
+  const _createPackage = () => {
+    // setIsLoading(true);
+    const data = {
+      name: newPackageName,
+      price: newPackagePrice,
+      package_limit: newPackageLimit,
+      description: newPackageDescription,
+    };
+    createPackage(data, token).then(() => {
+      setNewPackageDescription([]);
+      setNewPackageLimit("");
+      setNewPackageName("");
+      setNewPackagePrice("");
+      setIsAddPackagemodal("");
+    });
+    console.log(data);
   };
 
   useEffect(() => {
@@ -48,15 +74,20 @@ const Packages = ({
     });
   }, []);
 
-  const makeListArray = (data) => {
+  const makeListArray = (data, type) => {
     let array = data.split("\n");
     let updatedList = array.filter((item) => {
       return item !== "";
     });
-    setUpdateSelectedPackageData({
-      ...updateSelectedPackageData,
-      description: updatedList,
-    });
+
+    if (type === "update") {
+      setUpdateSelectedPackageData({
+        ...updateSelectedPackageData,
+        description: updatedList,
+      });
+    } else {
+      setNewPackageDescription(updatedList);
+    }
   };
 
   const openModal = (item) => {
@@ -67,6 +98,15 @@ const Packages = ({
   const addnewpackage = () => {
     setIsAddPackagemodal(true);
   };
+
+  useEffect(() => {
+    setPackages(packagesReducer?.allPackages);
+  }, [packagesReducer?.allPackages]);
+
+  useEffect(() => {
+    setCustomPackages(packagesReducer?.customPackages);
+  }, [packagesReducer?.customPackages]);
+
   return (
     <div className="container-fluid">
       <h2 className="page-heading ml-3">Packages</h2>
@@ -82,7 +122,7 @@ const Packages = ({
                 className="btn btn-success btn-sm mr-1"
                 onClick={() => setShowAllPackages(true)}
               >
-                Packages
+                Default Packages
               </button>
               <button
                 className="btn btn-success btn-sm mr-1"
@@ -266,7 +306,7 @@ const Packages = ({
                           className="form-control"
                           name="description"
                           onChange={(e) => {
-                            makeListArray(e.target.value);
+                            makeListArray(e.target.value, "update");
                           }}
                         ></textarea>
                       </>
@@ -296,7 +336,7 @@ const Packages = ({
               </div>
             </div>
           )}
-          :
+          :{/* CREATE NEW PACKAGE  */}
           {isAddPackagemodal && (
             <div
               className={`modal fade ${
@@ -326,6 +366,8 @@ const Packages = ({
                     <div className="input-group input-group-lg mb-2">
                       <input
                         type="text"
+                        value={newPackageName}
+                        onChange={(e) => setNewPackageName(e.target.value)}
                         className="form-control"
                         aria-label="Large"
                         aria-describedby="inputGroup-sizing-sm"
@@ -334,7 +376,9 @@ const Packages = ({
                     </div>
                     <div className="input-group input-group-lg mb-2">
                       <input
-                        type="text"
+                        type="number"
+                        value={newPackagePrice}
+                        onChange={(e) => setNewPackagePrice(e.target.value)}
                         className="form-control input-size"
                         aria-label="Large"
                         aria-describedby="inputGroup-sizing-sm"
@@ -344,9 +388,22 @@ const Packages = ({
                         type="text"
                         className="form-control input-size"
                         aria-label="Large"
+                        value={newPackageLimit}
+                        onChange={(e) => setNewPackageLimit(e.target.value)}
                         aria-describedby="inputGroup-sizing-sm"
                         placeholder="Package Limit"
                       />
+                    </div>
+                    <div className="input-group input-group-lg mb-2">
+                      <textarea
+                        placeholder="Package Details"
+                        rows="5"
+                        className="form-control"
+                        name="description"
+                        onChange={(e) => {
+                          makeListArray(e.target.value, "create");
+                        }}
+                      ></textarea>
                     </div>
                   </div>
                   <div className="modal-footer">
@@ -358,7 +415,11 @@ const Packages = ({
                     >
                       Close
                     </button>
-                    <button type="button" className="btn btn-round btn-primary">
+                    <button
+                      onClick={() => _createPackage()}
+                      type="button"
+                      className="btn btn-round btn-primary"
+                    >
                       Save changes
                     </button>
                   </div>
@@ -371,7 +432,7 @@ const Packages = ({
     </div>
   );
 };
-const mapStateToProps = ({ packagesReducer,authReducer }) => {
-  return { packagesReducer,authReducer };
+const mapStateToProps = ({ packagesReducer, authReducer }) => {
+  return { packagesReducer, authReducer };
 };
 export default connect(mapStateToProps, actions)(Packages);

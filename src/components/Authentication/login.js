@@ -12,7 +12,7 @@ const Login = ({ adminLogin, authReducer }) => {
   const [password, setPasswrod] = useState("");
   const [loader, setLoader] = useState(false);
   const history = useHistory();
-  console.log(authReducer, ".................");
+  // console.log(authReducer, ".................");
 
   const _onPressLogin = async () => {
     if (email && password) {
@@ -64,7 +64,7 @@ const Login = ({ adminLogin, authReducer }) => {
                   type="email"
                   className="form-control round"
                   id="signin-email"
-                  defaultValue="user@domain.com"
+            
                   placeholder="Email"
                 />
               </div>
@@ -81,7 +81,7 @@ const Login = ({ adminLogin, authReducer }) => {
                   type="password"
                   className="form-control round"
                   id="signin-password"
-                  defaultValue="thisisthepassword"
+   
                   placeholder="Password"
                 />
               </div>

@@ -16,6 +16,7 @@ import { bookingsReducer } from "./reducers/bookingsReducer";
 import { langaugesReducer } from "./reducers/langaugesReducer";
 import { userReducer } from "./reducers/userReducer";
 import { occasionsReducer } from "./reducers/occasionsReducer";
+import { paymentsReducer } from "./reducers/paymentsReducer";
 import { packagesReducer } from "./reducers/packagesReducer";
 import { roleReducer } from "./reducers/roleReducer";
 import { persistStore, persistReducer } from "redux-persist";
@@ -29,7 +30,7 @@ const presistConfig = {
 
 const rootReducer = combineReducers({
   userReducer,
-  authReducer,
+  authReducer,paymentsReducer,
   langaugesReducer,
   occasionsReducer,
   settings,

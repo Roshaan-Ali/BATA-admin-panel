@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actions from "../../actions/actions";
-import { imageUrl, token } from "../../config/config";
+import { imageUrl } from "../../config/config";
 import person from "../../assets/images/person.png";
 import BounceLoader from "react-spinners/BounceLoader";
 import Switch from "react-switch";
@@ -11,7 +11,7 @@ const AllUsers = ({ authReducer, userReducer, getAllUsers, toggleUsers }) => {
   const [allUsers, setAllUsers] = useState(userReducer?.allUsers);
   const [isLoading, setIsLoading] = useState(true);
   const token = authReducer?.accessToken;
-  console.log(authReducer);
+  console.log(token);
   // const [userType, setUserType] = useState(2);
   useEffect(() => {
     setIsLoading(true);
@@ -23,7 +23,7 @@ const AllUsers = ({ authReducer, userReducer, getAllUsers, toggleUsers }) => {
 
   const _onPressSwitch = (id) => {
     setIsLoading(true);
-    toggleUsers(id).then(() => {
+    toggleUsers(id, token).then(() => {
       getAllUsers(token);
       setIsLoading(false);
     });
@@ -100,50 +100,71 @@ const AllUsers = ({ authReducer, userReducer, getAllUsers, toggleUsers }) => {
               <div className="table-responsive">
                 <table className="table table-hover table-custom spacing5">
                   <tbody>
-                    {allUsers?.map((item, idx) => (
-                      // userType === item?.role_id &&
-                      <tr key={idx}>
-                        <td className="w60">
-                          <img
-                            src={
-                              item?.profile_image !== undefined &&
-                              item?.profile_image !== null
-                                ? `${imageUrl}${item?.profile_image}`
-                                : person
-                            }
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title=""
-                            alt="Avatar"
-                            className="w35 rounded"
-                            data-original-title="Avatar Name"
-                          />
-                        </td>
-                        <td>
-                          <a href="/" title="">
+                    <tr>
+                      <td className="font-weight-bold">User Image</td>
+                      <td className="font-weight-bold">Full Name</td>
+                      <td className="font-weight-bold">E-mail Address</td>
+                      <td className="font-weight-bold">Language</td>
+                      <td className="font-weight-bold">Current Package</td>
+                      <td className="font-weight-bold">Enable/Disable</td>
+                    </tr>
+                    {allUsers?.length > 0 ? (
+                      allUsers?.map((item, idx) => (
+                        // (item?.language || item?.language[0]) &&
+                        // userType === item?.role_id &&
+                        <tr key={idx}>
+                          <td className="w60">
+                            <img
+                              src={
+                                item?.profile_image !== undefined &&
+                                item?.profile_image !== null &&
+                                item?.profile_image !== ""
+                                  ? `${imageUrl}${item?.profile_image}`
+                                  : person
+                              }
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title=""
+                              alt="Avatar"
+                              className="w35 rounded"
+                              data-original-title="Avatar Name"
+                            />
+                          </td>
+                          <td style={{ textTransform: "capitalize" }}>
                             {item?.first_name}
-                          </a>
-                        </td>
-                        <td>
-                          <span>{item?.email}</span>
-                        </td>
-                        <td>
-                          <p>{item?.language}</p>
-                        </td>
-                        <td>
-                          <p>{item?.service_type}</p>
-                        </td>
-                        <td>
-                          <p>{item?.current_package}</p>
-                        </td>
-                        <td>
-                          <Switch
-                            onChange={() => _onPressSwitch(item?.id)}
-                            checked={item?.blocked === 1 ? true : false}
-                          />
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td>
+                            <span>{item?.email}</span>
+                          </td>
+                          <td>
+                            <p>
+                              {/* {item?.language?.name
+                              ? item?.language?.name
+                              : "No Language"} */}
+                              {Array.isArray(item?.language)
+                                ? item?.language?.map((ele) => `${ele?.name}, `)
+                                : item?.language?.name}
+                            </p>
+                          </td>
+
+                          <td>
+                            <p>
+                              {item?.current_package?.name
+                                ? item?.current_package?.name
+                                : "No Package"}
+                            </p>
+                          </td>
+                          <td>
+                            <Switch
+                              onChange={() => _onPressSwitch(item?.id)}
+                              checked={item?.blocked === 1 ? false : true}
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <h4>No Users Or Interpreters Record</h4>
+                    )}
                     <tr></tr>
                   </tbody>
                 </table>

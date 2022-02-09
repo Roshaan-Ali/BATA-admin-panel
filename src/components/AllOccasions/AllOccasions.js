@@ -9,8 +9,9 @@ import Switch from "react-switch";
 const AllOccasions = ({
   occasionsReducer,
   getAllOccasions,
-  updateOccasions,authReducer,
-  toggleLanguage,
+  updateOccasions,
+  authReducer,
+  toggleOccasion,
   createOccasions,
 }) => {
   let alloccasions = occasionsReducer?.allOccasions;
@@ -21,7 +22,7 @@ const AllOccasions = ({
   const [updateObject, setUpdateObject] = useState(null);
   const [occasioncreated, setLanguageCreated] = useState("");
   const token = authReducer?.accessToken;
-
+  // console.log(token);
   useEffect(() => {
     getAllOccasions(token).then(() => {
       setIsLoading(false);
@@ -30,7 +31,7 @@ const AllOccasions = ({
 
   const _onPressSwitch = (id) => {
     setIsLoading(true);
-    toggleLanguage(id).then(() => {
+    toggleOccasion(id, token).then(() => {
       getAllOccasions(token);
       setIsLoading(false);
     });
@@ -38,7 +39,7 @@ const AllOccasions = ({
 
   const _onPressModalButton = () => {
     setIsLoading(true);
-    updateOccasions(updateObject?.id, updatedOccasion).then(() => {
+    updateOccasions(updateObject?.id, updatedOccasion, token).then(() => {
       getAllOccasions(token);
       setIsLoading(false);
       setModal("");
@@ -57,7 +58,7 @@ const AllOccasions = ({
   };
 
   const createNewOccasion = () => {
-    createOccasions(occasioncreated).then(() => {
+    createOccasions(occasioncreated, token).then(() => {
       getAllOccasions(token);
     });
     setIsAddOccasionmodal("");
@@ -93,13 +94,22 @@ const AllOccasions = ({
                 <div className="table-responsive">
                   <table className="table table-hover table-custom spacing5">
                     <tbody>
-                      {alloccasions?.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>
-                            <p>{item?.name}</p>
-                          </td>
-                          <td>
-                            {/* <label className="switch">
+                      <tr>
+                        <td className="font-weight-bold">Occasion Name</td>
+                        <td className="font-weight-bold">Enable / Disable</td>
+                        <td className="font-weight-bold">Action</td>
+                      </tr>
+                      {
+                      // alloccasions?.length > 0 
+                      1==2
+                      ? (
+                        alloccasions?.map((item, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              <p>{item?.name}</p>
+                            </td>
+                            <td>
+                              {/* <label className="switch">
                               <input
                                 type="checkbox"
                                 onChange={() => {
@@ -108,26 +118,29 @@ const AllOccasions = ({
                               />
                               <span class="slider round"></span>
                             </label> */}
-                            <Switch
-                              onChange={() => _onPressSwitch(item?.id)}
-                              checked={item?.status === 1 ? true : false}
-                            />
-                          </td>
-                          <td>
-                            <button
-                              className="btn btn-success btn-sm mr-1 float-right"
-                              onClick={() => openModal(item)}
-                            >
-                              Update
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                              <Switch
+                                onChange={() => _onPressSwitch(item?.id)}
+                                checked={item?.status === 1 ? true : false}
+                              />
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-success btn-sm mr-1 float-right w-100"
+                                onClick={() => openModal(item)}
+                              >
+                                Update
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <h4>No Occasions Record</h4>
+                      )}
                       <tr></tr>
                     </tbody>
                   </table>
                 </div>
-                <nav aria-label="Page navigation example">
+                {/* <nav aria-label="Page navigation example">
                   <ul className="pagination">
                     <li className="page-item">
                       <Link className="page-link" to="/" aria-label="Previous">
@@ -157,7 +170,7 @@ const AllOccasions = ({
                       </Link>
                     </li>
                   </ul>
-                </nav>
+                </nav> */}
               </div>
             </div>
             {isModal && (
@@ -285,7 +298,7 @@ const AllOccasions = ({
     </>
   );
 };
-const mapStateToProps = ({ occasionsReducer,authReducer }) => {
-  return { occasionsReducer,authReducer };
+const mapStateToProps = ({ occasionsReducer, authReducer }) => {
+  return { occasionsReducer, authReducer };
 };
 export default connect(mapStateToProps, actions)(AllOccasions);

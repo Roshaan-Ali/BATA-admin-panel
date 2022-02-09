@@ -1,4 +1,4 @@
-import { apiUrl, token } from "../config/config";
+import { apiUrl } from "../config/config";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -24,29 +24,29 @@ export const getAllUsers = (token) => async (dispatch) => {
     console.log(error);
   }
 };
-export const enable_disable = (url) => async (dispatch) => {
-  try {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-    const response = await axios.put(
-      `${apiUrl}${url}`,
-      {},
-      {
-        headers,
-      }
-    );
-    if (response.data.status) {
-      toast.success("Active");
-    } else {
-      toast.error("Couldn't Active");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+// export const enable_disable = (url) => async (dispatch) => {
+//   try {
+//     const headers = {
+//       Authorization: `Bearer ${token}`,
+//     };
+//     const response = await axios.put(
+//       `${apiUrl}${url}`,
+//       {},
+//       {
+//         headers,
+//       }
+//     );
+//     if (response.data.status) {
+//       toast.success("Active");
+//     } else {
+//       toast.error("Couldn't Active");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
-export const toggleLanguage = (id) => async (dispatch) => {
+export const toggleLanguage = (id, token) => async (dispatch) => {
   const header = {
     headers: {
       Authorization: "Bearer " + token,
@@ -59,13 +59,30 @@ export const toggleLanguage = (id) => async (dispatch) => {
       {},
       header
     );
-    console.log(response.data);
   } catch (err) {
     console.log("Network Error", err);
   }
 };
 
-export const toggleUsers = (id) => async (dispatch) => {
+export const toggleOccasion = (id, token) => async (dispatch) => {
+  const header = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await axios.put(
+      `${apiUrl}/api/admin/occation/activeOrInactive/${id}`,
+      {},
+      header
+    );
+  } catch (err) {
+    console.log("Network Error", err);
+  }
+};
+
+export const toggleUsers = (id, token) => async (dispatch) => {
   const header = {
     headers: {
       Authorization: "Bearer " + token,
@@ -107,7 +124,7 @@ export const getAllLanguages = (token) => async (dispatch) => {
   }
 };
 
-export const updateLanguage = (id, text) => async (dispatch) => {
+export const updateLanguage = (id, text, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -127,7 +144,7 @@ export const updateLanguage = (id, text) => async (dispatch) => {
   }
 };
 
-export const createLanguage = (text) => async (dispatch) => {
+export const createLanguage = (text, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -152,7 +169,6 @@ export const createLanguage = (text) => async (dispatch) => {
 };
 
 export const getAllPackages = (token) => async (dispatch) => {
-  console.log(token);
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -174,7 +190,7 @@ export const getAllPackages = (token) => async (dispatch) => {
   }
 };
 
-export const updateAllPackages = (data, id) => async (dispatch) => {
+export const updateAllPackages = (data, id, token) => async (dispatch) => {
   console.log(data, "::::::::::::::::::", id);
   try {
     const headers = {
@@ -263,7 +279,7 @@ export const getAllOccasions = (token) => async (dispatch) => {
   }
 };
 
-export const updateOccasions = (id, text) => async (dispatch) => {
+export const updateOccasions = (id, text, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -284,7 +300,31 @@ export const updateOccasions = (id, text) => async (dispatch) => {
   }
 };
 
-export const createOccasions = (text) => async (dispatch) => {
+export const createPackage = (data, token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.post(
+      `${apiUrl}/api/admin/packages/create`,
+      data,
+      { headers }
+    );
+    if (response.data.status) {
+      dispatch({
+        type: "CREATE_PACKAGE",
+        payload: response.data.data,
+      });
+      toast.success("New Package Created.");
+    } else {
+      toast.error("Couldn't Create New Package.");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createOccasions = (text, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -328,6 +368,24 @@ export const getBookings = (token) => async (dispatch) => {
   }
 };
 
+export const getPayments = (token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get(`${apiUrl}/api/admin/subscription/gets`, {
+      headers,
+    });
+    console.log(response?.data);
+    dispatch({
+      type: "GET_PAYMENTS",
+      payload: response.data.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const getInactiveInterpreters = (token) => async (dispatch) => {
   try {
     const headers = {
@@ -346,7 +404,7 @@ export const getInactiveInterpreters = (token) => async (dispatch) => {
   }
 };
 
-export const assignInterpreter = (id, data) => async (dispatch) => {
+export const assignInterpreter = (id, data, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -361,14 +419,14 @@ export const assignInterpreter = (id, data) => async (dispatch) => {
   }
 };
 
-export const rejectInterpreter = (id, data) => async (dispatch) => {
+export const rejectInterpreter = (id, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
     const response = await axios.put(
       `${apiUrl}/api/admin/bookingInterpreter/reject/${id}`,
-      data,
+      {},
       { headers }
     );
   } catch (err) {
@@ -376,7 +434,7 @@ export const rejectInterpreter = (id, data) => async (dispatch) => {
   }
 };
 
-export const createInterpreter = (data) => async (dispatch) => {
+export const createInterpreter = (data, token) => async (dispatch) => {
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -393,7 +451,7 @@ export const createInterpreter = (data) => async (dispatch) => {
         type: "CREATE_INTERPRETER",
         payload: response.data.data,
       });
-      toast.success("New Interpreter Created.");
+      toast.info(response?.data?.msg);
     } else {
       toast.error("Couldn't Create New Interpreter");
     }
@@ -436,3 +494,64 @@ export const logout = () => async (dispatch) => {
     console.log(err);
   }
 };
+
+export const getDashboardCounts = (token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get(`${apiUrl}/api/admin/dashboard/gets`, {
+      headers,
+    });
+    if (response.data.status) {
+      dispatch({
+        type: "DASHBOARD_COUNTS",
+        payload: response.data.data,
+      });
+      // console.log(first);
+    } else {
+      console.log("fail");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getDashboardChartData = (token) => async (dispatch) => {
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axios.get(
+      `${apiUrl}/api/admin/dashboard/chartData`,
+      {
+        headers,
+      }
+    );
+    if (response.data.status) {
+      dispatch({
+        type: "DASHBOARD_CHART_DATA",
+        payload: response.data.data,
+      });
+      // console.log(first);
+    } else {
+      console.log("fail");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const sendFirebaseTokenToDatabase =
+  (fbToken, token) => async (dispatch) => {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    try {
+      await axios.put(`${apiUrl}/api/admin/users/updateToken`, fbToken, {
+        headers,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };

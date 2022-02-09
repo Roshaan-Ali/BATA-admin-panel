@@ -6,13 +6,10 @@ import { imageUrl, token } from "../../config/config";
 import person from "../../assets/images/person.png";
 import BounceLoader from "react-spinners/BounceLoader";
 import moment from "moment";
-import { toast } from "react-toastify";
-import PhoneInput from "react-phone-number-input";
 
-const CreateInterpreter = ({
+const DeactivateUser = ({
   langaugesReducer,
-  getAllLanguages,
-  authReducer,
+  getAllLanguages,authReducer,
   createInterpreter,
 }) => {
   const [first_name, setFirst_name] = useState("");
@@ -40,37 +37,33 @@ const CreateInterpreter = ({
       phone == "" ||
       password == "" ||
       confirmPassword == "" ||
-      selectedLanguages?.length == 0
+      language?.length == 0
     ) {
       setFieldLeftEmpty(true);
     } else {
-      if (password == confirmPassword) {
-        let data = {
-          first_name,
-          last_name,
-          email,
-          phone,
-          password,
-          confirmPassword,
-          language: selectedLanguages.map((ele) => ele?.id),
-          role_id: "3",
-        };
-        console.log(data);
-        await createInterpreter(data, token).then(() => {
-          setFirst_name("");
-          setLast_name("");
-          setPassword("");
-          setEmail("");
-          setConfirmPassword("");
-          setPhone("");
-          setLanguage(langaugesReducer?.allLangauges);
-          setSelectedLanguages([langaugesReducer?.allLangauges[0]]);
-          setFieldLeftEmpty(false);
-        });
-        setIsLoading(false);
-      } else {
-        toast.info("Both password and confirm password should be same.");
-      }
+      let data = {
+        first_name,
+        last_name,
+        email,
+        phone,
+        password,
+        confirmPassword,
+        language,
+        role_id: "3",
+      };
+      console.log(data);
+      await createInterpreter(data).then(() => {
+        setFirst_name("");
+        setLast_name("");
+        setPassword("");
+        setEmail("")
+        setConfirmPassword("");
+        setPhone("");
+        setLanguage(langaugesReducer?.allLangauges);
+        setSelectedLanguages([langaugesReducer?.allLangauges[0]]);
+        setFieldLeftEmpty(false);
+      });
+      setIsLoading(false);
     }
   };
 
@@ -185,21 +178,14 @@ const CreateInterpreter = ({
               setLast_name(e.target.value);
             }}
           />
-          {/* <input
+          <input
             style={{ fontSize: "18px" }}
             value={phone}
-            type="number"
             placeholder="Phone"
             onChange={(e) => {
               setPhone(e.target.value);
             }}
-          /> */}
-          <PhoneInput
-            placeholder="Enter phone number"
-            value={phone}
-            onChange={setPhone}
           />
-          )
         </div>
         <div
           style={{
@@ -367,7 +353,7 @@ const CreateInterpreter = ({
   );
 };
 
-const mapStateToProps = ({ langaugesReducer, authReducer }) => {
-  return { langaugesReducer, authReducer };
+const mapStateToProps = ({ langaugesReducer,authReducer }) => {
+  return { langaugesReducer,authReducer };
 };
-export default connect(mapStateToProps, actions)(CreateInterpreter);
+export default connect(mapStateToProps, actions)(DeactivateUser);

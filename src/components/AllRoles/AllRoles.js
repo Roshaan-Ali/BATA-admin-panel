@@ -5,14 +5,11 @@ import { connect } from "react-redux";
 import * as actions from "../../actions/actions";
 import { token } from "../../config/config";
 // import avatar from "../assets/images/xs/avatar1.jpg";
-import person from "../../assets/images/person.png"
+import person from "../../assets/images/person.png";
 
-const AllRoles = ({roleReducer, getAllRoles }) => {
-  console.log(roleReducer, "______________");
+const AllRoles = ({ roleReducer, getAllRoles }) => {
   let allroles = roleReducer?.allRoles;
   useEffect(() => {
-    console.log(roleReducer, "ooooooooo", allroles);
-    console.log("-------------------");
     getAllRoles(token);
   }, []);
   return (
@@ -33,7 +30,7 @@ const AllRoles = ({roleReducer, getAllRoles }) => {
                     <tr key={idx}>
                       <td className="w60">
                         <img
-                          src={item.profile_image? item.profile_image:person}
+                          src={item.profile_image ? item.profile_image : person}
                           data-toggle="tooltip"
                           data-placement="top"
                           title=""

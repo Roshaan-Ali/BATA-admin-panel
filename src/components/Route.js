@@ -83,6 +83,7 @@ import AllRoles from "../components/AllRoles/AllRoles";
 import AllOccasions from "./AllOccasions/AllOccasions";
 import Requests from "./Requests/Requests";
 import CreateInterpreter from "./CreateInterpreter/CreateInterpreter";
+import PackagePayments from "./PackagePayments/PackagePayments";
 const Routes = [
   {
     path: "/ui-nestable",
@@ -433,6 +434,13 @@ const Routes = [
     exact: true,
     pageTitle: "Requests",
     component: Requests,
+  },
+  {
+    path: "/PackagePayments",
+    name: "Payments",
+    exact: true,
+    pageTitle: "Payments",
+    component: PackagePayments,
   },
   {
     path: "/createInter",

@@ -25,7 +25,7 @@ const Requests = ({
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalLoader, setModalLoader] = useState(false);
   const token = authReducer?.accessToken;
-console.log(authReducer);
+  // console.log(token);
 
   useEffect(() => {
     setIsLoading(true);
@@ -38,9 +38,9 @@ console.log(authReducer);
 
   const _onPressToggleBookings = (status) => {
     if (status === "all") {
-      setBookings(bookingsReducer.bookings);
+      setBookings(bookingsReducer?.bookings);
     } else {
-      const filterArr = bookingsReducer.bookings?.filter(
+      const filterArr = bookingsReducer?.bookings?.filter(
         (ele) => ele?.status == status
       );
       setBookings(filterArr);
@@ -48,9 +48,9 @@ console.log(authReducer);
   };
 
   useEffect(() => {
-    setBookings(bookingsReducer.bookings);
+    setBookings(bookingsReducer?.bookings);
     setInterpreters(roleReducer?.inactiveInterpreters);
-  }, [bookingsReducer.bookings, roleReducer?.inactiveInterpreters]);
+  }, [bookingsReducer?.bookings, roleReducer?.inactiveInterpreters]);
 
   const _onPressAlocateInterpreter = (booking) => {
     let arr = [];
@@ -72,11 +72,11 @@ console.log(authReducer);
     let hasPrimaryLang,
       hasTranslationLang = false;
 
-    for (let index = 0; index < item.language.length; index++) {
-      if (ele.primaryLang === item.language[index].name) {
+    for (let index = 0; index < item?.language?.length; index++) {
+      if (ele.primaryLang === item?.language[index]?.name) {
         hasPrimaryLang = true;
       }
-      if (ele.translationLang === item.language[index].name) {
+      if (ele.translationLang === item?.language[index]?.name) {
         hasTranslationLang = true;
       }
     }
@@ -126,7 +126,7 @@ console.log(authReducer);
       interpreters: arr,
     };
 
-    await assignInterpreter(selectedItem?.id, data);
+    await assignInterpreter(selectedItem?.id, data, token);
     setShowAllocationModal(false);
     setSelectedItem(null);
     getBookings(token);
@@ -135,7 +135,7 @@ console.log(authReducer);
 
   const _onPressRejectModalButton = async () => {
     setModalLoader(true);
-    await rejectInterpreter(selectedItem?.id).then(() => {
+    await rejectInterpreter(selectedItem?.id, token).then(() => {
       setShowAllocationModal(false);
       setModalLoader(false);
       setSelectedItem(null);
@@ -225,84 +225,100 @@ console.log(authReducer);
               <div className="table-responsive">
                 <table className="table table-hover table-custom spacing5">
                   <tbody>
-                    {/* <tr className="table-headings">
-                      <td>Name</td>
-                      <td>Status</td>
-                      <td>Occasion</td>
-                      <td>From</td>
-                      <td>To</td>
-                      <td>Translation Address</td>
-                    </tr> */}
-                    {bookings?.map((item, idx) => (
-                      <tr key={idx} style={{ width: "100%" }}>
-                        <td className="w60">
-                          <img
-                            src={
-                              item?.client?.profile_image !== undefined &&
-                              item?.client?.profile_image !== null &&
-                              item?.client?.profile_image !== ""
-                                ? `${imageUrl}${item?.client?.profile_image}`
-                                : person
-                            }
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title=""
-                            alt="Avatar"
-                            className="w35 rounded"
-                            data-original-title="Avatar Name"
-                          />
-                        </td>
-                        <td>
-                          <p href="/" title="">
-                            {item?.client?.first_name}
-                          </p>
-                        </td>
-                        <td>
-                          <span>{item?.status}</span>
-                        </td>
-                        <td>
-                          <p>{item?.occasion?.name}</p>
-                        </td>
-                        <td>
-                          <p>{item?.primary_language?.name}</p>
-                        </td>
-                        <td>
-                          <p>
-                            {moment(item?.start_date).format(
-                              "DDD/MMM/YYYY hh:mm A"
-                            )}
-                          </p>
-                        </td>
-                        <td>
-                          <p>
-                            {moment(item?.end_date).format(
-                              "DDD/MMM/YYYY hh:mm A"
-                            )}
-                          </p>
-                        </td>
-                        <td>{item?.translation_address}</td>
-                        {item?.status == "pending" && (
-                          <td>
-                            <button
-                              style={{
-                                borderRadius: "20px",
-                                fontSize: "15px",
-                                color: "white",
-                                padding: "6px 25px",
-                                marginLeft: "10px",
-                                backgroundColor: "#81246C",
-                              }}
-                              onClick={() => {
-                                setSelectedItem(item);
-                                _onPressAlocateInterpreter(item);
-                              }}
-                            >
-                              Assign Interpreter
-                            </button>
+                    <tr>
+                      <td className="font-weight-bold">Client Image</td>
+                      <td className="font-weight-bold">Client Name</td>
+                      <td className="font-weight-bold">Status</td>
+                      <td className="font-weight-bold">Occasion </td>
+                      <td className="font-weight-bold">Primary Language </td>
+                      <td
+                        className="font-weight-bold"
+                        style={{ marginLeft: 80 }}
+                      >
+                        From
+                      </td>
+                      <td className="font-weight-bold">To</td>
+                      <td className="font-weight-bold">Translation Address</td>
+                      <td className="font-weight-bold">Action</td>
+                    </tr>
+                    {bookings?.length > 0 ? (
+                      bookings?.map((item, idx) => (
+                        <tr key={idx} style={{ width: "100%" }}>
+                          <td className="w60">
+                            <img
+                              src={
+                                item?.client?.profile_image !== undefined &&
+                                item?.client?.profile_image !== null &&
+                                item?.client?.profile_image !== ""
+                                  ? `${imageUrl}${item?.client?.profile_image}`
+                                  : person
+                              }
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title=""
+                              alt="Avatar"
+                              className="w35 rounded"
+                              data-original-title="Avatar Name"
+                            />
                           </td>
-                        )}
-                      </tr>
-                    ))}
+                          <td>
+                            <p style={{ textTransform: "capitalize" }}>
+                              {item?.client?.first_name}
+                            </p>
+                          </td>
+                          <td>
+                            <span style={{ textTransform: "capitalize" }}>
+                              {item?.status}
+                            </span>
+                          </td>
+                          <td>
+                            <p>{item?.occasion?.name ? item?.occasion?.name : "No Occasion Mentioned"}</p>
+                          </td>
+                          <td>
+                            <p>{item?.primary_language?.name}</p>
+                          </td>
+                          <td>
+                            <p>
+                              {moment(item?.start_date).format(
+                                "DD/MMM/YYYY hh:mm A"
+                              )}
+                            </p>
+                          </td>
+                          <td>
+                            <p>
+                              {moment(item?.end_date).format(
+                                "DD/MMM/YYYY hh:mm A"
+                              )}
+                            </p>
+                          </td>
+                          <td>{item?.translation_address}</td>
+                          {item?.status == "pending" ? (
+                            <td>
+                              <button
+                                style={{
+                                  borderRadius: "20px",
+                                  fontSize: "15px",
+                                  color: "white",
+                                  padding: "6px 25px",
+                                  marginLeft: "10px",
+                                  backgroundColor: "#81246C",
+                                }}
+                                onClick={() => {
+                                  setSelectedItem(item);
+                                  _onPressAlocateInterpreter(item);
+                                }}
+                              >
+                                Assign Interpreter
+                              </button>
+                            </td>
+                          ) : (
+                            "No Action"
+                          )}
+                        </tr>
+                      ))
+                    ) : (
+                      <h4>No Bookings Record</h4>
+                    )}
                     <tr></tr>
                   </tbody>
                 </table>
